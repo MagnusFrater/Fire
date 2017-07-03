@@ -316,12 +316,13 @@ const Fire = {
      * @param {callback} onErrorCallback - (OPTIONAL) callback for user account deletion error; returns error as parameter
      */
     deleteUser (onSuccessCallback, onErrorCallback) {
-        firebase.auth().currentUser.delete()
-            .then(function() {
-                if (onSuccessCallback) onSuccessCallback();
-            }, function(error) {
-                if (onErrorCallback) onErrorCallback(error);
-            });
+        const currentUser = firebase.auth().currentUser;
+        if(currentUser) currentUser.delete()
+                            .then(function() {
+                                if (onSuccessCallback) onSuccessCallback();
+                            }, function(error) {
+                                if (onErrorCallback) onErrorCallback(error);
+                            });
     },
 
     /**
@@ -449,13 +450,14 @@ const Fire = {
      * @param {callback} onErrorCallback - (OPTIONAL) callback on database listener removal error; returns error as parameter
      */
     stop (reference, onSuccessCallback, onErrorCallback) {
-        reference.off()
-            .then (function () {
-                if (onSuccessCallback) onSuccessCallback();
-            })
-            .catch (function (error) {
-                if (onErrorCallback) onErrorCallback(error);
-            });
+        const off = reference.off();
+        if (off) off
+                    .then (function () {
+                        if (onSuccessCallback) onSuccessCallback();
+                    })
+                    .catch (function (error) {
+                        if (onErrorCallback) onErrorCallback(error);
+                    });
     },
 
     /**
@@ -466,7 +468,9 @@ const Fire = {
      * @return {string} - current user's uid
      */
     getUserId () {
-        return firebase.auth().currentUser.uid;
+        const currentUser = firebase.auth().currentUser;
+        return (currentUser)? currentUser.uid : null;
+        //return firebase.auth().currentUser.uid;
     },
 
     /**
