@@ -28,8 +28,8 @@ Full suite Firebase wrapper made in pure Javascript.
 * Getting the database as a reference
 * Writing data
 * Reading data (once)
-* Removing data
 * Checking if data exists
+* Removing data
 * Listening for data changes
 * Removing all listeners
 

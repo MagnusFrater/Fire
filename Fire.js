@@ -368,6 +368,58 @@ const Fire = {
     },
 
     /**
+     * Checks if a key exists as a direct child of a specified realtime database reference.
+     *
+     * @method exists
+     * 
+     * @param {DatabaseReference} reference - realtime database reference
+     * @param {string} childKey - key to check for as a direct child of the specified realtime database reference
+     * @param {callback} onSuccessCallback - callback for childKey exists; returns childKey's data as parameter
+     * @param {callback} onErrorCallback - (OPTIONAL) callback for childKey nonexistent; returns error as parameter
+     */
+    exists (reference, childKey, onSuccessCallback, onErrorCallback) {
+        this.read(reference, function (snapshot) {
+            // get data at reference
+            const data = snapshot.val();
+
+            // get childKey exists status
+            var exists = data.hasOwnProperty(childKey);
+            
+            // handle childKey's exist state
+            if (exists) {
+                onSuccessCallback(data[childKey]);
+            } else {
+                const error = {
+                    code: "childKey nonexistent",
+                    message: "childKey does not exist at the specified reference."
+                };
+
+                if (onErrorCallback) onErrorCallback(error);
+            }
+
+        }, onErrorCallback);
+    },
+
+    /**
+     * Removes data at specified realtime database reference.
+     *
+     * @method listen
+     * 
+     * @param {DatabaseReference} reference - realtime database reference
+     * @param {callback} onSuccessCallback - (OPTIONAL) callback on successful reference removal
+     * @param {callback} onErrorCallback - (OPTIONAL) callback on reference removal error; returns error as parameter
+     */
+    remove (reference, onSuccessCallback, onErrorCallback) {
+        reference.remove()
+            .then (function () {
+                if (onSuccessCallback) onSuccessCallback();
+            })
+            .catch (function (error) {
+                if (onErrorCallback) onErrorCallback(error);
+            });
+    },
+
+    /**
      * Listens for data changes at specified realtime database reference.
      *
      * @method listen
@@ -404,58 +456,6 @@ const Fire = {
             .catch (function (error) {
                 if (onErrorCallback) onErrorCallback(error);
             });
-    },
-
-    /**
-     * Removes data at specified realtime database reference.
-     *
-     * @method listen
-     * 
-     * @param {DatabaseReference} reference - realtime database reference
-     * @param {callback} onSuccessCallback - (OPTIONAL) callback on successful reference removal
-     * @param {callback} onErrorCallback - (OPTIONAL) callback on reference removal error; returns error as parameter
-     */
-    remove (reference, onSuccessCallback, onErrorCallback) {
-        reference.remove()
-            .then (function () {
-                if (onSuccessCallback) onSuccessCallback();
-            })
-            .catch (function (error) {
-                if (onErrorCallback) onErrorCallback(error);
-            });
-    },
-
-    /**
-     * Checks if a key exists as a direct child of a specified realtime database reference.
-     *
-     * @method exists
-     * 
-     * @param {DatabaseReference} reference - realtime database reference
-     * @param {string} childKey - key to check for as a direct child of the specified realtime database reference
-     * @param {callback} onSuccessCallback - callback for childKey exists; returns childKey's data as parameter
-     * @param {callback} onErrorCallback - (OPTIONAL) callback for childKey nonexistent; returns error as parameter
-     */
-    exists (reference, childKey, onSuccessCallback, onErrorCallback) {
-        this.read(reference, function (snapshot) {
-            // get data at reference
-            const data = snapshot.val();
-
-            // get childKey exists status
-            var exists = data.hasOwnProperty(childKey);
-            
-            // handle childKey's exist state
-            if (exists) {
-                onSuccessCallback(data[childKey]);
-            } else {
-                const error = {
-                    code: "childKey nonexistent",
-                    message: "childKey does not exist at the specified reference."
-                };
-
-                if (onErrorCallback) onErrorCallback(error);
-            }
-
-        }, onErrorCallback);
     },
 
     /**
